@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+*.mo
+db.sqlite3
+media/
+staticfiles/
+
+# Celery
+celerybeat-schedule.db
+celerybeat.pid
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Pytest / Coverage
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+
+# Migrations (keep __init__.py but ignore others if needed)
+# Uncomment if you don’t want to track migrations history
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Pip installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environments
+.env.local
+.env.development
+.env.production
+.env.test
+.env
+
+# JetBrains / Other IDEs
+.idea/
+*.iml
