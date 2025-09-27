@@ -79,14 +79,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'jetapult_crypto_backend.wsgi.application'
 
 
-# put on your settings.py file below INSTALLED_APPS
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ],
 }
 
 SIMPLE_JWT = {
@@ -114,7 +110,7 @@ CELERY_TASK_ALWAYS_EAGER = False  # set True only in tests
 
 CELERY_BEAT_SCHEDULE = {
     "fetch-top-coins-every-5min": {
-        "task": "coins.tasks.fetch_top_coins",
+        "task": "apis.tasks.fetch_top_coins",
         "schedule": 300.0,  # every 5 minutes
         "args": (10,),      # fetch top 10 coins
     },

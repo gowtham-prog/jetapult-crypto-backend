@@ -21,3 +21,11 @@ class HistoricalPrice(models.Model):
     class Meta:
         unique_together = ('coin', 'date')
         ordering = ['date']
+
+    
+class FavoriteCoin(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    coin = models.ForeignKey(Coin, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'coin')

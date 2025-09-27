@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -14,14 +13,6 @@ from .serializers import CoinSerializer, CoinWithHistorySerializer, HistoricalPr
 from .qa import handle_query
 
 # Create your views here.
-def index(request):
-    return HttpResponse("Hello world!")
-
-class getUserAPIView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
-    print("this", queryset)
 
 class TopCoinsView(generics.ListAPIView):
     """
@@ -29,7 +20,7 @@ class TopCoinsView(generics.ListAPIView):
     Returns the top N coins ordered by market_cap_rank
     """
     serializer_class = CoinSerializer
-    permission_classes = [ AllowAny]
+    permission_classes = [ IsAuthenticated]
 
     def get_queryset(self):
         n = self.request.query_params.get("n", 10)
@@ -45,7 +36,7 @@ class CoinHistoryView(APIView):
     GET /api/coins/<coingecko_id>/history/?days=30
     Returns the historical prices for the given coin for the last X days
     """
-    permission_classes = [ AllowAny]
+    permission_classes = [ IsAuthenticated]
 
     def get(self, request, coingecko_id):
         coin = get_object_or_404(Coin, coingecko_id=coingecko_id)
