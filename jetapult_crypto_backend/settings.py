@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+import sys
 from dotenv import load_dotenv
 from celery.schedules import crontab
 
@@ -32,9 +33,42 @@ SECRET_KEY = 'django-insecure-&oly$rf1el1plai77(42wp@$_m0f8k$vptcgwy!w1ha$kd_uvu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['*']
 
 
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Use this list to specify allowed origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Keep this as True if your frontend needs to send cookies or auth headers
+CORS_ALLOW_CREDENTIALS = True
+
+# Your other CORS settings are fine
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,13 +78,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'apis',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware", 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,18 +93,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
-
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-
-# CORS_ALLOW_CREDENTIALS = True  
 
 ROOT_URLCONF = 'jetapult_crypto_backend.urls'
 
@@ -132,35 +157,48 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
     },
     'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+            'stream': sys.stdout,
+        },
+        'error_console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+            'stream': sys.stderr,
+        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose',
-        },
+            'formatter': 'file',
+            'filename': 'debug.log'
+        }
     },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'error_console', 'file'],
+            'propagate': True,
+        },
+        'django.server': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'error_console', 'file'],
+            'propagate': True
+        },
+        'celery': {
+            'handlers': ['console', 'error_console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
         },
-        'jetapult_crypto_backend': {
-            'handlers': [ 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
+    }
 }
 
 # Password validation
