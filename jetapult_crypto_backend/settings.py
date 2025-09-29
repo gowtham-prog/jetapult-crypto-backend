@@ -31,11 +31,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&oly$rf1el1plai77(42wp@$_m0f8k$vptcgwy!w1ha$kd_uvu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
+ALLOWED_HOSTS = [
+    '34.47.162.241',    # Your server's public IP
+    '127.0.0.1',        # For local access on the server
+    'localhost',        # Also for local access
+    # 'yourdomain.com',   # Add your domain name here later
+    # 'www.yourdomain.com', # And the www version
+]
 
-ALLOWED_HOSTS = ['*']
-
+STATIC_ROOT= BASE_DIR/"staticfiles"
+STATIC_URL = "/static/"
 
 CORS_ALLOW_ALL_ORIGINS = False
 
@@ -68,6 +75,9 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
+    "Cache-Control",
+    "Pragma",
+    "Expires",
 ]
 # Application definition
 
