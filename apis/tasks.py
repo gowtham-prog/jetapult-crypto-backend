@@ -46,7 +46,7 @@ def fetch_top_coins(self, n=10):
 
     with transaction.atomic():
         for c in data:
-            coin, _ = Coin.objects.update_or_create(
+            Coin.objects.update_or_create(
                 coingecko_id=c["id"],
                 defaults={
                     "symbol": c["symbol"].upper(),
@@ -57,11 +57,32 @@ def fetch_top_coins(self, n=10):
                     "percent_change_24h": c.get("price_change_percentage_24h"),
                 },
             )
-            # fetch historical data for each coin
-            fetch_coin_history.delay(coin.coingecko_id, days=30)
     
     logger.info(f"Successfully fetched and stored {len(data)} top coins.")
 
+
+@shared_task(bind=True, max_retries=3)
+def fetch_all_coins_history(self, days=30, sleep_between_coins=0.0):
+    """
+    Enqueue or fetch historical prices for all coins in the database.
+
+    Args:
+        days: Number of days of historical data to fetch per coin
+        sleep_between_coins: Optional delay between scheduling each coin
+    """
+    coin_ids = list(Coin.objects.values_list("coingecko_id", flat=True))
+    if not coin_ids:
+        logger.info("No coins found to fetch history for.")
+        return
+
+    logger.info(f"Scheduling history fetch for {len(coin_ids)} coins (days={days}).")
+    for coingecko_id in coin_ids:
+        try:
+            fetch_coin_history.delay(coingecko_id, days=days)
+        except Exception as e:
+            logger.error(f"Failed to schedule history for {coingecko_id}: {e}")
+        if sleep_between_coins > 0:
+            time.sleep(sleep_between_coins)
 
 @shared_task(bind=True, max_retries=3)
 def fetch_coin_history(self, coingecko_id, days=30, sleep_interval=0.1):
