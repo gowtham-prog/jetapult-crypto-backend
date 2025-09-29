@@ -158,10 +158,13 @@ CELERY_TASK_ALWAYS_EAGER = False  # set True only in tests
 CELERY_BEAT_SCHEDULE = {
     "fetch-top-coins-every-5min": {
         "task": "apis.tasks.fetch_top_coins",
-        "schedule": 300.0,  # every 5 minutes
+#        "schedule": 300.0,,
+        'schedule': crontab(minute='*/5'), # every 5 minutes
         "args": (10,),      # fetch top 10 coins
     },
 }
+
+
 
 LOGGING = {
     'version': 1,
