@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     '34.47.162.241',    # Your server's public IP
     '127.0.0.1',        # For local access on the server
     'localhost',        # Also for local access
+    'alludu.duckdns.org',   # Add your domain here
     # 'yourdomain.com',   # Add your domain name here later
     # 'www.yourdomain.com', # And the www version
 ]
@@ -50,6 +51,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://crypto-frontend-jet.netlify.app",
 ]
 
 # Keep this as True if your frontend needs to send cookies or auth headers
