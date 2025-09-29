@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from datetime import date, timedelta
+from django.db.models import Exists, OuterRef
 
 
-from .models import Coin, HistoricalPrice
+
+from .models import Coin, HistoricalPrice,FavoriteCoin
 from .serializers import CoinSerializer, CoinWithHistorySerializer, HistoricalPriceSerializer
 from .qa import handle_query
 
@@ -23,13 +25,22 @@ class TopCoinsView(generics.ListAPIView):
     permission_classes = [ IsAuthenticated]
 
     def get_queryset(self):
+        user = self.request.user
         n = self.request.query_params.get("n", 10)
         try:
             n = int(n)
         except ValueError:
             n = 10
-        return Coin.objects.order_by("market_cap_rank")[:n]
 
+        return (
+            Coin.objects
+            .order_by("market_cap_rank")
+            .annotate(
+                is_favorite=Exists(
+                    FavoriteCoin.objects.filter(user=user, coin=OuterRef("pk"))
+                )
+            )[:n]
+        )
 
 class CoinHistoryView(APIView):
     """

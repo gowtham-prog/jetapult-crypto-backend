@@ -9,9 +9,14 @@ class HistoricalPriceSerializer(serializers.ModelSerializer):
 
 
 class CoinSerializer(serializers.ModelSerializer):
+    is_favorite = serializers.SerializerMethodField()
+
+    def get_is_favorite(self, obj):
+        return getattr(obj, "is_favorite", False)
     class Meta:
         model = Coin
         fields = [
+            "id",
             "coingecko_id",
             "symbol",
             "name",
@@ -20,6 +25,7 @@ class CoinSerializer(serializers.ModelSerializer):
             "volume",
             "percent_change_24h",
             "updated_at",
+            "is_favorite",
         ]
 
 

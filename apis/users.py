@@ -40,5 +40,6 @@ class FavoriteCoinDeleteView(generics.DestroyAPIView):
     serializer_class = FavoriteCoinSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return FavoriteCoin.objects.filter(user=self.request.user)
+    def get_object(self):
+        coin_id = self.kwargs.get('coin_id')
+        return FavoriteCoin.objects.get(user=self.request.user, coin_id=coin_id)

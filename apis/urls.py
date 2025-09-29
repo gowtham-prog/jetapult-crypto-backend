@@ -10,6 +10,6 @@ urlpatterns = [
     path("qa/", QAView.as_view(), name="qa"),
     path("register/", UserRegisterView.as_view(), name="user-register"),
     path("favorites/", FavoriteCoinListCreateView.as_view(), name="favorite-coin-list-create"),
-    path("favorites/<int:pk>/", FavoriteCoinDeleteView.as_view(), name="favorite-coin-delete"),
+    path("favorites/<int:coin_id>/", FavoriteCoinDeleteView.as_view(), name="favorite-coin-delete"),
 
 ]
