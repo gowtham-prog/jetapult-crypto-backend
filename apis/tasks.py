@@ -18,7 +18,7 @@ COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 def _headers():
     headers = {"accept": "application/json"}
     if COINGECKO_API_KEY:
-        headers["x-cg-pro-api-key"] = COINGECKO_API_KEY
+        headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
     return headers
 
 
@@ -28,7 +28,7 @@ def fetch_top_coins(self, n=10):
     Fetch top N coins by market cap and store/update them in DB.
     """
     url = f"{COINGECKO_BASE_URL}/coins/markets"
-    params = {"vs_currency": "usd", "order": "market_cap_desc", "per_page": n, "page": 1}
+    params = {"vs_currency": "usd", "order": "market_cap_desc", "per_page": n, "page": 1,"x-cg-demo-api-key": COINGECKO_API_KEY}
     flag = False
     
     try:
@@ -103,7 +103,7 @@ def fetch_coin_history(self, coingecko_id, days=30, sleep_interval=0.1):
     """
     url = f"{COINGECKO_BASE_URL}/coins/{coingecko_id}/market_chart"
     logger.info(f"Fetching history for { url} days")
-    params = {"vs_currency": "usd", "days": days}
+    params = {"vs_currency": "usd", "days": days, "x-cg-demo-api-key": COINGECKO_API_KEY}
 
     try:
         resp = requests.get(url, params=params, headers=_headers(), timeout=10)
