@@ -166,7 +166,7 @@ CELERY_BEAT_SCHEDULE = {
     "fetch-all-coins-history-daily": {
         "task": "apis.tasks.fetch_all_coins_history",
         "schedule": crontab(minute=0, hour=0),  # daily at 00:00 UTC
-        "args": (30, 10),  # 30 days, 2 seconds between coins
+        "args": (30, 20), 
     },
 }
 

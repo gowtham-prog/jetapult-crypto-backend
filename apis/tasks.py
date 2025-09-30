@@ -29,6 +29,7 @@ def fetch_top_coins(self, n=10):
     """
     url = f"{COINGECKO_BASE_URL}/coins/markets"
     params = {"vs_currency": "usd", "order": "market_cap_desc", "per_page": n, "page": 1}
+    flag = False
     
     try:
         resp = requests.get(url, params=params, headers=_headers(), timeout=10)
@@ -44,6 +45,9 @@ def fetch_top_coins(self, n=10):
     
     data = resp.json()
 
+    if Coin.objects.count() == 0:
+        flag = True
+
     with transaction.atomic():
         for c in data:
             Coin.objects.update_or_create(
@@ -58,11 +62,13 @@ def fetch_top_coins(self, n=10):
                 },
             )
     
+    if flag:
+        fetch_all_coins_history.delay(days=30, sleep_between_coins=30)
     logger.info(f"Successfully fetched and stored {len(data)} top coins.")
 
 
 @shared_task(bind=True, max_retries=3)
-def fetch_all_coins_history(self, days=30, sleep_between_coins=0.0):
+def fetch_all_coins_history(self, days=30, sleep_between_coins=30):
     """
     Enqueue or fetch historical prices for all coins in the database.
 
@@ -104,9 +110,8 @@ def fetch_coin_history(self, coingecko_id, days=30, sleep_interval=0.1):
         resp.raise_for_status()
     except requests.HTTPError as e:
         logger.error(f"HTTPError fetching history for {coingecko_id}: {resp.status_code} {resp.text}")
-        # Only retry if it's a server error or rate limit; 400 errors are usually invalid request
         if resp.status_code >= 500 or resp.status_code == 429:
-            raise self.retry(exc=e, countdown=10)
+            raise self.retry(exc=e, countdown=30)
         return
     except requests.RequestException as e:
         logger.error(f"RequestException fetching history for {coingecko_id}: {e}")

@@ -28,7 +28,7 @@ def handle_query(text: str):
                 "answer": f"The current price of {coin.name} is ${coin.last_price:.2f}",
                 "data": {"price": float(coin.last_price)}
             }
-        return {"type": "unknown", "answer": "❌ I couldn't find that coin. Please check the name or symbol."}
+        return {"type": "unknown", "answer": "I couldn't find that coin. Please check the name or symbol."}
 
     # --- TREND QUERIES ---
     trend_match = TREND_RE.search(text)
@@ -50,7 +50,7 @@ def handle_query(text: str):
                 "answer": f"📈 Showing {days}-day trend for {coin.name}",
                 "data": list(history)
             }
-        return {"type": "unknown", "answer": "❌ Coin not found for trend query."}
+        return {"type": "unknown", "answer": "Coin not found for trend query."}
 
     # --- HELP / DEFAULT ---
     return {
